@@ -1,0 +1,134 @@
+- import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Screen dimensions
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("RaceKul - Moto Bike Race Game")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+
+# Game settings
+FPS = 60
+clock = pygame.time.Clock()
+
+# Bike properties
+bike_images = {
+    "red": pygame.image.load("bike_red.png"),  # Replace with your red bike image
+    "black": pygame.image.load("bike_black.png"),  # Replace with your black bike image
+    "blue": pygame.image.load("bike_blue.png"),  # Replace with your blue bike image
+}
+
+# Transform images for uniform size
+for color in bike_images:
+    bike_images[color] = pygame.transform.scale(bike_images[color], (50, 100))
+
+# Game variables
+lives = 10
+score = 0
+level = "simple"  # Change to "medium" or "hard" for different difficulties
+bike_color = "blue"  # Options: "red", "black", "blue"
+bike_img = bike_images[bike_color]
+
+bike_x = WIDTH // 2
+bike_y = HEIGHT - 120
+bike_speed = 10
+
+# Obstacle properties
+obstacle_width = 50
+obstacle_height = 100
+obstacle_speed = {"simple": 5, "medium": 7, "hard": 10}[level]
+obstacles = []
+
+# Fonts
+font = pygame.font.Font(None, 36)
+title_font = pygame.font.Font(None, 48)
+
+# Game loop
+running = True
+while running:
+    screen.fill(WHITE)
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Get key presses
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and bike_x > 0:
+        bike_x -= bike_speed
+    if keys[pygame.K_RIGHT] and bike_x < WIDTH - 50:
+        bike_x += bike_speed
+
+    # Add new obstacles
+    if random.randint(1, 30) == 1:
+        obstacle_x = random.randint(0, WIDTH - obstacle_width)
+        obstacles.append([obstacle_x, -obstacle_height])
+
+    # Move obstacles
+    for obstacle in obstacles:
+        obstacle[1] += obstacle_speed
+
+    # Remove off-screen obstacles
+    obstacles = [ob for ob in obstacles if ob[1] < HEIGHT]
+
+    # Check for collisions
+    for obstacle in obstacles:
+        if (
+            bike_x < obstacle[0] + obstacle_width
+            and bike_x + 50 > obstacle[0]
+            and bike_y < obstacle[1] + obstacle_height
+            and bike_y + 100 > obstacle[1]
+        ):
+            lives -= 1
+            obstacles.remove(obstacle)
+            if lives <= 0:
+                running = False
+
+    # Draw bike
+    screen.blit(bike_img, (bike_x, bike_y))
+
+    # Draw obstacles
+    for obstacle in obstacles:
+        pygame.draw.rect(screen, RED, (*obstacle, obstacle_width, obstacle_height))
+
+    # Update score
+    score += 1
+    score_text = font.render(f"Score: {score}", True, BLACK)
+    lives_text = font.render(f"Lives: {lives}", True, BLACK)
+    level_text = font.render(f"Level: {level.title()}", True, BLACK)
+
+    # Draw title
+    title_text = title_font.render("RaceKul", True, GREEN)
+    screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 10))
+
+    # Display HUD
+    screen.blit(score_text, (10, 50))
+    screen.blit(lives_text, (10, 90))
+    screen.blit(level_text, (10, 130))
+
+    # Refresh display
+    pygame.display.flip()
+    clock.tick(FPS)
+
+pygame.quit()👋 Hi, I’m @kuldipya
+- 👀 I’m interested in ...
+- 🌱 I’m currently learning ...
+- 💞️ I’m looking to collaborate on ...
+- 📫 How to reach me ...
+- 😄 Pronouns: ...
+- ⚡ Fun fact: ...
+
+<!---
+kuldipya/kuldipya is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+You can click the Preview link to take a look at your changes.
+--->
